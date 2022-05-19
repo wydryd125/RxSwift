@@ -28,7 +28,19 @@ import RxSwift
 /*:
  # skip(until:)
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 
+let subject = PublishSubject<Int>()
+let trigger = PublishSubject<Int>()
 
+subject.skip(until: trigger)
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
+
+subject.onNext(1)
+
+trigger.onNext(0)
