@@ -28,14 +28,14 @@ import RxSwift
  # skip
  */
 /*
- 
+ Observable이 방출하는 요소중에서 지정된 값 이후만 전달
  */
 
 let disposeBag = DisposeBag()
 let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 Observable.from(numbers)
-  .skip(3)
+  .skip(3) // index가 아닌 count
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 

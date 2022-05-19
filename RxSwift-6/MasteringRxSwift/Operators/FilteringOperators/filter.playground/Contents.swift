@@ -28,14 +28,14 @@ import RxSwift
  # filter
  */
 /*
- 
+ Observable이 방출하는 값을 filtering
  */
 
 let disposeBag = DisposeBag()
 let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 Observable.from(numbers)
-  .filter { $0.isMultiple(of: 2) }
+  .filter { $0.isMultiple(of: 2) } // 짝수만 방출 
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 

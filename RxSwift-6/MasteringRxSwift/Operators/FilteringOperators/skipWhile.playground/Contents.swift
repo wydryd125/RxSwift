@@ -28,14 +28,14 @@ import RxSwift
  # skip(while:)
  */
 /*
- 
+ Observable이 방출하는 요소 중 true 값부터 순서대로 전달
  */
 
 let disposeBag = DisposeBag()
 let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 Observable.from(numbers)
-  .skip { !$0.isMultiple(of: 2) }
+  .skip { !$0.isMultiple(of: 2) } // 2부터 방출
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 

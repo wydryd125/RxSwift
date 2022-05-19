@@ -28,14 +28,18 @@ import RxSwift
  # take(while:)
  */
 /*
+ behavior - .inclusive
+ 조건에 해당하는 요소까지 전달
  
+ behavior - .exclusive
+ 조건에 해당하는 요소 전까지 전달
  */
 
 let disposeBag = DisposeBag()
 let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 Observable.from(numbers)
-  .take(while: { !$0.isMultiple(of: 2) }, behavior: .inclusive)
+  .take(while: { !$0.isMultiple(of: 5) }, behavior: .inclusive)
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 

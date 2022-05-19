@@ -28,29 +28,30 @@ import RxSwift
  # takeLast
  */
 /*
- 
+ takeLast(count: int)
+ 마지막 count 요소들만 전달.
  */
 
 let disposeBag = DisposeBag()
 
 let subject = PublishSubject<Int>()
 
-subject.takeLast(2)
+subject.takeLast(2) // 마지막 두개만 저장
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 
-(1...10).forEach { subject.onNext($0) }
+(1...10).forEach { subject.onNext($0) } //9,10 저장
 //subject.onCompleted()
 
-subject.onNext(11)
+subject.onNext(11) // 10,11 저장
 
-subject.onCompleted()
+subject.onCompleted() // onCompleted를 전달하면 마지막 저장요소10,11)를 구독자에게 방출
 
 enum MyError: Error {
   case error
 }
 
-subject.onError(MyError.error)
+subject.onError(MyError.error) // onError를 전달하면 버퍼에 저장되어 있는이벤트를 버리고 error만 전달
 
 
 

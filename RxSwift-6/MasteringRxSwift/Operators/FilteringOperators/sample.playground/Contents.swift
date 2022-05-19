@@ -31,9 +31,31 @@ import RxSwift
 
 let disposeBag = DisposeBag()
 
+func currentTimeString() -> String {
+  let f = DateFormatter()
+  f.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+  return f.string(from: Date())
+}
 
+Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+  .debug()
+  .take(10)
+  .throttle(.milliseconds(2500), latest: true, scheduler: MainScheduler.instance)
+  .subscribe { print(currentTimeString(), $0) }
+  .disposed(by: disposeBag)
 
+//0,2,5,7,9,completed
+//latest: true일때 정확한 주기로 이벤트를 전달
 
+Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+  .debug()
+  .take(10)
+  .throttle(.milliseconds(2500), latest: false, scheduler: MainScheduler.instance)
+  .subscribe { print(currentTimeString(), $0) }
+  .disposed(by: disposeBag)
+
+//0,3,6,9,completed
+//latest: false일때 해당 주기 이후의 이벤트를 전달
 
 
 

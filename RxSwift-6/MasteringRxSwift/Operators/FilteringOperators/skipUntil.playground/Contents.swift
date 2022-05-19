@@ -29,7 +29,7 @@ import RxSwift
  # skip(until:)
  */
 /*
- 
+ skip(until: )가 방출한 이후부터의 요소가 전달
  */
 
 let disposeBag = DisposeBag()
@@ -41,6 +41,8 @@ subject.skip(until: trigger)
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 
-subject.onNext(1)
+subject.onNext(1) //전달 X
 
-trigger.onNext(0)
+trigger.onNext(0) //trigger가 방출
+
+subject.onNext(5) // next(5) 전달

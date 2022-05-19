@@ -27,34 +27,46 @@ import RxSwift
 /*:
  # throttle
  */
+/*
+ .throttle(<#T##dueTime: RxTimeInterval##RxTimeInterval#>, latest: <#T##Bool#>, scheduler: <#T##SchedulerType#>)
+ 첫번째 파라미터는 반복주기를 전달,
+ latest: ture = 주기를 엄격하게 지킨다
+ latest: false = 반복주기가 방출된 다음 가장 먼저 방출된 이벤트를 방출
+ */
 
 let disposeBag = DisposeBag()
 
 let buttonTap = Observable<String>.create { observer in
-   DispatchQueue.global().async {
-      for i in 1...10 {
-         observer.onNext("Tap \(i)")
-         Thread.sleep(forTimeInterval: 0.3)
-      }
-      
-      Thread.sleep(forTimeInterval: 1)
-      
-      for i in 11...20 {
-         observer.onNext("Tap \(i)")
-         Thread.sleep(forTimeInterval: 0.5)
-      }
-      
-      observer.onCompleted()
-   }
-   
-   return Disposables.create {
-      
-   }
+  DispatchQueue.global().async {
+    for i in 1...10 {
+      observer.onNext("Tap \(i)")
+      Thread.sleep(forTimeInterval: 0.3)
+    }
+    
+    Thread.sleep(forTimeInterval: 1)
+    
+    for i in 11...20 {
+      observer.onNext("Tap \(i)")
+      Thread.sleep(forTimeInterval: 0.5)
+    }
+    
+    observer.onCompleted()
+  }
+  
+  return Disposables.create {
+    
+  }
 }
 
-buttonTap    
-   .subscribe { print($0) }
-   .disposed(by: disposeBag)
+buttonTap
+  .throttle(.milliseconds(1000), scheduler: MainScheduler.instance)
+// 1초마다 방출
+// (forTimeInterval: 0.3) - 첫이벤트는 방출하고 1초에 해당하는 이벤트를 전달, 0.4(1.2초), 0.7(2.1초), 10(3초)
+
+// (forTimeInterval: 0.5) - 첫이벤트는 방출하고 1초에 해당하는 이벤트를 전달, 12(1초), 14(2초), 16(3초), 18(4초), 20(5초)
+
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
 
 
 

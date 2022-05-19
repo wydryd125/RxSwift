@@ -28,6 +28,13 @@ import RxSwift
  # debounce
  */
 
+/*
+ .debounce(<#T##dueTime: RxTimeInterval##RxTimeInterval#>, scheduler: <#T##SchedulerType#>)
+ 연산자가 next를 방출하는 조건
+ next 이벤트를 방출한 다음 지정된 시간동안 방출하지 않는다면 해당 시점의 마지막 이벤트만 전달
+ 이벤트가 방출된다면 timer를 초기화, 다시 지정된 시간동안 대기. 이벤트가 방출되지 않으면 마지막 이벤트를 전달
+
+ */
 
 let disposeBag = DisposeBag()
 
@@ -54,6 +61,9 @@ let buttonTap = Observable<String>.create { observer in
 }
 
 buttonTap
-   .subscribe { print($0) }
-   .disposed(by: disposeBag)
+  .debounce(.milliseconds(1000), scheduler: MainScheduler.instance)
+// 1초에 해당하는 이벤트가 없기 때문에 마지막 이벤트가 방출 next(10),
+// timer는 초기화 1초보다 작은 0.5로 방출되기 때문에 마지막 이벤트인 next(20) 전달된다. 그리고 completed
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
 

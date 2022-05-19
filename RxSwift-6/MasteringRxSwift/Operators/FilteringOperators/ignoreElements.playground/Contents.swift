@@ -28,7 +28,8 @@ import RxSwift
  # ignoreElements
  */
 /*
- 
+ next event를 필터링하는 연산자
+ .ignoreElements를 사용하면 completed or error만 전달한다.
  */
 
 let disposeBag = DisposeBag()

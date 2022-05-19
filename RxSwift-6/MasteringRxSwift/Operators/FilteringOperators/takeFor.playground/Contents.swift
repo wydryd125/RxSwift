@@ -29,14 +29,15 @@ import RxSwift
  */
 
 /*
- 
+ .take(for: <#T##RxTimeInterval#>, scheduler: <#T##SchedulerType#>)
+ TimeInterval 지정한 값까지만 이벤트 전달, 그 이후로는 전달 X
  */
 
 let disposeBag = DisposeBag()
 
 let o = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
 
-o.take(for: .seconds(5), scheduler: MainScheduler.instance)
+o.take(for: .seconds(5), scheduler: MainScheduler.instance) // 5초 전까지 전달. 시간 상 오차가 있기 때문에 0-3까지 전달된다.
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 

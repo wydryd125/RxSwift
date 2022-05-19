@@ -28,7 +28,7 @@ import RxSwift
  # single
  */
 /*
- 
+ 하나의 요소만 방출, 두개 이상일때는 error
  */
 
 let disposeBag = DisposeBag()
@@ -38,11 +38,13 @@ Observable.just(1)
   .single()
   .subscribe { print($0) }
   .disposed(by: disposeBag)
+//next(1), 첫번째 요소 방출
 
 Observable.from(numbers)
   .single { $0 == 3 }
   .subscribe { print($0) }
   .disposed(by: disposeBag)
+//next(3), 첫번째 요소 방출
 
 let subject = PublishSubject<Int>()
 
@@ -51,4 +53,9 @@ subject.single()
   .disposed(by: disposeBag)
 
 subject.onNext(100)
+subject.onCompleted()
+//next(100) onCompleted 방출되기 전까지 하나의 이전 요소가 방출
+subject.onNext(5) //전달x
+
+
 

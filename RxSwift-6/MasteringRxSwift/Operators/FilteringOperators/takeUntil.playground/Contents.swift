@@ -28,7 +28,8 @@ import RxSwift
  # take(until:)
  */
 /*
- 
+ take(until: )
+ 파라미터, 클로저 true 이전 까지만 전달.
  */
 
 let disposeBag = DisposeBag()
@@ -40,13 +41,13 @@ subject.take(until: { $0 > 5 })
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 
-subject.onNext(1)
-subject.onNext(2)
+subject.onNext(1) //전달 O
+subject.onNext(2) //전달 O
 
 //trigger.onNext(0)
 
-subject.onNext(6)
-subject.onNext(3)
+subject.onNext(6) //전달 X, completed
+subject.onNext(3) //전달 X
 
 
 

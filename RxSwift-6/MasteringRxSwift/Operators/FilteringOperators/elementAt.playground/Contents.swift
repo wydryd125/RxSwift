@@ -28,13 +28,13 @@ import RxSwift
  # elementAt
  */
 /*
- 
+ 특정 인덱스의 값을 제한적으로 방출
  */
 
 let disposeBag = DisposeBag()
 let fruits = ["🍏", "🍎", "🍋", "🍓", "🍇"]
 
 Observable.from(fruits)
-  .elementAt(1)
+  .elementAt(2)
   .subscribe { print($0) }
   .disposed(by: disposeBag)

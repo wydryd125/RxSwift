@@ -28,7 +28,7 @@ import RxSwift
  # distinctUntilChanged
  */
 /*
- 
+ 연속된 동일한 요소가 방출되지 않게 fitering해주는 연산자
  */
 
 struct Person {
@@ -45,8 +45,27 @@ let persons = [
     Person(name: "Tim", age: 56)
 ]
 
+Observable.from(numbers)
+  .distinctUntilChanged()
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
+// 1,3,2,3,1,5,7
 
+Observable.from(numbers)
+  .distinctUntilChanged { !$0.isMultiple(of: 2) && !$1.isMultiple(of: 2) }
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
+// 1,2,2,3
 
+Observable.from(tuples)
+  .distinctUntilChanged { $0.1 }
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
+// $0.0 값이 모두 1 같기 때문에 next((1, "하나"))만 전달
+// $0.1 값이 모두 다르기 때문에 next((1, "하나")) next((1, "일")) next((1, "one")) 모두 전달
 
-
-
+Observable.from(persons)
+  .distinctUntilChanged(at: \.age)
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
+//[0], [1] age가 같기 때문에 next(Person(name: "Sam", age: 12)) next(Person(name: "Tim", age: 56)) 전달 
