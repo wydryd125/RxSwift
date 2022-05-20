@@ -27,8 +27,27 @@ import RxSwift
 /*:
  # flatMap
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
+
+let a = BehaviorSubject(value: 1)
+let b = BehaviorSubject(value: 2)
+
+let subject = PublishSubject<BehaviorSubject<Int>>()
+
+subject
+  .flatMap { $0.asObserver() }
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
+
+subject.onNext(a)
+subject.onNext(b)
+
+a.onNext(11)
+b.onNext(22)
 
 let redCircle = "🔴"
 let greenCircle = "🟢"
@@ -38,3 +57,21 @@ let redHeart = "❤️"
 let greenHeart = "💚"
 let blueHeart = "💙"
 
+Observable.from([redCircle, greenCircle, blueCircle])
+  .flatMap { circle -> Observable<String> in
+    switch circle {
+    case redCircle:
+      return Observable.repeatElement(redHeart)
+        .take(5)
+    case greenCircle:
+      return Observable.repeatElement(greenHeart)
+        .take(5)
+    case blueCircle:
+      return Observable.repeatElement(blueHeart)
+        .take(5)
+    default:
+      return Observable.just("")
+    }
+  }
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)

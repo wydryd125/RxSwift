@@ -27,17 +27,23 @@ import RxSwift
 /*:
  # compactMap
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 
 let subject = PublishSubject<String?>()
 
 subject
-    .subscribe { print($0) }
-    .disposed(by: disposeBag)
+//  .filter { $0 != nil }
+//  .map { $0! }
+  .compactMap { $0 } // 주석 처리된 위와 같은 결과
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
 
 Observable<Int>.interval(.milliseconds(300), scheduler: MainScheduler.instance)
-    .take(10)
-    .map { _ in Bool.random() ? "⭐️" : nil }
-    .subscribe(onNext: { subject.onNext($0) })
-    .disposed(by: disposeBag)
+  .take(10)
+  .map { _ in Bool.random() ? "⭐️" : nil }
+  .subscribe(onNext: { subject.onNext($0) })
+  .disposed(by: disposeBag)

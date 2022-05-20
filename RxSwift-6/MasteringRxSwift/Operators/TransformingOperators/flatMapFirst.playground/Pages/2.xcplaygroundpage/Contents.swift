@@ -29,6 +29,9 @@ import RxSwift
 /*:
  # flatMapFirst #2
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 
@@ -70,7 +73,7 @@ DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
     sourceObservable.onNext(greenCircle)
 }
 
-DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
     sourceObservable.onNext(blueCircle)
 }
 

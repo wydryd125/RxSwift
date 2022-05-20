@@ -27,7 +27,10 @@ import RxSwift
 /*:
  # concatMap
  */
-
+/*
+ 
+ */
+  
 let disposeBag = DisposeBag()
 
 let redCircle = "🔴"
@@ -39,7 +42,7 @@ let greenHeart = "💚"
 let blueHeart = "💙"
 
 Observable.from([redCircle, greenCircle, blueCircle])
-    .flatMap { circle -> Observable<String> in
+    .concatMap { circle -> Observable<String> in
         switch circle {
         case redCircle:
             return Observable.repeatElement(redHeart)

@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # flatMapLatest
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 
@@ -42,7 +45,7 @@ let sourceObservable = PublishSubject<String>()
 let trigger = PublishSubject<Void>()
 
 sourceObservable
-    .flatMap { circle -> Observable<String> in
+    .flatMapLatest { circle -> Observable<String> in
         switch circle {
         case redCircle:
             return Observable<Int>.interval(.milliseconds(200), scheduler: MainScheduler.instance)
@@ -71,6 +74,10 @@ DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 
 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
     sourceObservable.onNext(blueCircle)
+}
+
+DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+  sourceObservable.onNext(redCircle)
 }
 
 DispatchQueue.main.asyncAfter(deadline: .now() + 10) {

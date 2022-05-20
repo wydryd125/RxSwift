@@ -27,10 +27,34 @@ import RxSwift
 /*:
  # groupBy
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 let words = ["Apple", "Banana", "Orange", "Book", "City", "Axe"]
 
+//Observable.from(words)
+//  .groupBy { $0.count }
+//  .subscribe(onNext: { groupObservable in
+//    print("== \(groupObservable.key)")
+//    groupObservable.subscribe { print("\($0)") }
+//  })
+//  .disposed(by: disposeBag)
+
+
+//Observable.from(words)
+////  .groupBy { $0.count }
+//  .groupBy { $0.first ?? Character(" ") }
+//  .flatMap { $0.toArray() }
+//  .subscribe { print($0) }
+//  .disposed(by: disposeBag)
+
+Observable.range(start: 1 , count: 10)
+  .groupBy { $0.isMultiple(of: 2) }
+  .flatMap { $0.toArray() }
+  .subscribe { print($0) }
+  .disposed(by: disposeBag)
 
 
 

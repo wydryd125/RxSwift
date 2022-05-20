@@ -27,11 +27,40 @@ import RxSwift
 /*:
  # window
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 
+Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+  .window(timeSpan: .seconds(2), count: 3, scheduler: MainScheduler.instance)
+  .take(5)
+  .subscribe {
+    print($0)
+    
+    if let observable = $0.element {
+      observable.subscribe { print("inner: ", $0) }
+    }
+  }
+  .disposed(by: disposeBag)
 
 
+
+let windowOb = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+  .window(timeSpan: .seconds(2), count: 3, scheduler: MainScheduler.instance)
+  .take(5)
+
+
+windowOb
+  .subscribe {
+    print($0)
+    
+    if let observable = $0.element {
+      observable.subscribe { print("inner: ", $0) }
+    }
+  }
+  .disposed(by: disposeBag)
 
 
 

@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # flatMapFirst #1
  */
+/*
+ 
+ */
 
 let disposeBag = DisposeBag()
 
@@ -38,8 +41,8 @@ let redHeart = "❤️"
 let greenHeart = "💚"
 let blueHeart = "💙"
 
-Observable.from([redCircle, greenCircle, blueCircle])
-    .flatMap { circle -> Observable<String> in
+Observable.from([greenCircle, blueCircle, redCircle])
+    .flatMapFirst { circle -> Observable<String> in
         switch circle {
         case redCircle:
             return Observable.repeatElement(redHeart)
