@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # zip
  */
+/*
+indexed sequencing을 구현
+ */
 
 let bag = DisposeBag()
 
@@ -36,6 +39,26 @@ enum MyError: Error {
 
 let numbers = PublishSubject<Int>()
 let strings = PublishSubject<String>()
+
+Observable.zip(numbers, strings) { "\($0) - \($1)" }
+  .subscribe { print($0) }
+  .disposed(by: bag)
+
+numbers.onNext(1)
+strings.onNext("one")
+
+numbers.onNext(2)
+strings.onNext("two")
+
+numbers.onNext(3) // 짝이 없어서 방출되지 않는다.
+
+//numbers.onCompleted()
+numbers.onError(MyError.error) //하나라도 error를 전달하면 바로 종료한다.
+
+strings.onNext("three")
+strings.onCompleted()
+
+
 
 
 

@@ -27,6 +27,10 @@ import RxSwift
 /*:
  # withLatestFrom
  */
+/*
+ 트리거(연산자를 호출하는 옵저버블) 옵저버블이 next 이벤트를 방출하면 데이터 옵저버블이 가장 최근에 방출한 next 이벤트를 구독자에게 전달
+ 
+ */
 
 let bag = DisposeBag()
 
@@ -36,6 +40,21 @@ enum MyError: Error {
 
 let trigger = PublishSubject<Void>()
 let data = PublishSubject<String>()
+
+trigger.withLatestFrom(data)
+  .subscribe { print($0) }
+  .disposed(by: bag)
+
+data.onNext("Hello") //트리거에게 next 이벤트를 전달하지 않아 전달되지 않는다.
+trigger.onNext(()) // 구독자에게 전달된다.
+trigger.onNext(()) // 반복적으로 전달된다.
+
+//data.onCompleted() // 구독자에게 completed가 전달되지 않는다.
+//data.onError(MyError.error) // completed와는 달리 바로 error가 전달된다.
+trigger.onNext(())  // completed를 전달하였지만 가장 마지막으로 전달된 next(Hello)가 전달된다.
+
+trigger.onCompleted() // trigger로 completed를 전달하면 구독자에게 바로 전달된다.
+
 
 
 

@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # combineLatest
  */
+/*
+ 소스 옵저버블이 방출하는 최신 요소를 병합하는 연산자
+ */
 
 let bag = DisposeBag()
 
@@ -37,9 +40,25 @@ enum MyError: Error {
 let greetings = PublishSubject<String>()
 let languages = PublishSubject<String>()
 
+Observable.combineLatest(greetings, languages) { lhs, rhs -> String in
+  return "\(lhs), \(rhs)"
+}
+.subscribe { print($0) }
+.disposed(by: bag)
 
+greetings.onNext("Hi")
+languages.onNext("World!")
 
+greetings.onNext("Hello")
+languages.onNext("RxSwift")
 
+//greetings.onCompleted()
+greetings.onError(MyError.error)
+
+languages.onNext("SwiftUI")
+greetings.onNext("햐햐햐햐햐")
+
+languages.onCompleted()
 
 
 

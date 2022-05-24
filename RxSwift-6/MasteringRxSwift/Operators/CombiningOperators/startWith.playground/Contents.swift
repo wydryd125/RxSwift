@@ -27,9 +27,20 @@ import RxSwift
 /*:
  # startWith
  */
+/*
+옵저버블 시퀀스 앞에 새로운 요소를 추가하는 연산자
+ rast in first out 
+ */
 
 let bag = DisposeBag()
 let numbers = [1, 2, 3, 4, 5]
+
+Observable.from(numbers)
+  .startWith(0)
+  .startWith(-1, -2)
+  .startWith(-3) // 마지막으로 추가한 숫자가 제일 먼저 방출
+  .subscribe { print($0) }
+  .disposed(by: bag)
 
 
 

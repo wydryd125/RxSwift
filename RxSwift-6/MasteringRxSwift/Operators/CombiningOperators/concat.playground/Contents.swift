@@ -27,12 +27,25 @@ import RxSwift
 /*:
  # concat
  */
+/*
+두 개의 옵저버블을 연결
+ */
 
 let bag = DisposeBag()
 let fruits = Observable.from(["🍏", "🍎", "🥝", "🍑", "🍋", "🍉"])
 let animals = Observable.from(["🐶", "🐱", "🐹", "🐼", "🐯", "🐵"])
 
+Observable.concat([fruits, animals])
+  .subscribe { print($0) } // 과일 먼저 방출 후 동물 방출
+  .disposed(by: bag)
 
+fruits.concat(animals)
+  .subscribe { print($0) } // 위와 같이 방출
+  .disposed(by: bag)
+
+animals.concat(fruits)
+  .subscribe { print($0) } // 동물 먼저 방출 후 과일 방출
+  .disposed(by: bag)
 
 
 

@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # sample
  */
+/*
+ 트리거 옵저버블이 next 이벤트를 전달할 떄마다 데이터 옵저버블이 next 이벤트를 방출하지만, 동일한 next 이벤트를 반복해서 방출하지 않는 연산자
+ */
 
 let bag = DisposeBag()
 
@@ -37,8 +40,20 @@ enum MyError: Error {
 let trigger = PublishSubject<Void>()
 let data = PublishSubject<String>()
 
+data.sample(trigger)
+  .subscribe { print($0) }
+  .disposed(by: bag)
 
+//trigger.onNext(())
+data.onNext("Hello")
 
+trigger.onNext(())
+trigger.onNext(()) // 방출X, 동일한 이벤트를 방출하지 않는다.
+
+//data.onCompleted()
+//trigger.onNext(())
+
+data.onError(MyError.error) // trigger가 next를 방출하지 않아도 error를 전달한다.
 
 
 
