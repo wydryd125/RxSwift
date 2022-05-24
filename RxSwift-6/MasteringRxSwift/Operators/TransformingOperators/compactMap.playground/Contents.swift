@@ -28,7 +28,7 @@ import RxSwift
  # compactMap
  */
 /*
- 
+ nil과 unlapping된 요소를 필터링 해주는 연산자
  */
 
 let disposeBag = DisposeBag()

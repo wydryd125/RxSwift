@@ -28,11 +28,10 @@ import RxSwift
  # toArray
  */
 /*
- 
+ obsevable이 방출하는 array의 요소를 array 형식으로 방출하는 연산자
  */
 
 let disposeBag = DisposeBag()
-let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 let subject = PublishSubject<Int>()
 

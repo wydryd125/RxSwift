@@ -28,17 +28,30 @@ import RxSwift
  # buffer
  */
 /*
- 
+ 특정 주기동안 옵저버블이 방출하는 항목을 수집하여 배열로 방출
  */
 
 let disposeBag = DisposeBag()
 
 Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-  .buffer(timeSpan: .seconds(2), count: 3, scheduler: MainScheduler.instance)
-  .take(5)
+  .buffer(timeSpan: .seconds(3), count: 3, scheduler: MainScheduler.instance)
+  .take(5) 
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 
+/*
+ .seconds(2) - 수집 후 방출하는 시간
+ count: 3 - 수집하는 갯수, 이 갯수에 도달하지 못하여도 방출한다.
+ 
+ next([0]) //
+ next([1, 2, 3])
+ next([4, 5])
+ next([6, 7])
+ next([8, 9])
+ completed
+ 
+ 
+ */
 
 
 

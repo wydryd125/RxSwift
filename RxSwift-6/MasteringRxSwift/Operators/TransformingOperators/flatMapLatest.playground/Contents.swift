@@ -28,7 +28,7 @@ import RxSwift
  # flatMapLatest
  */
 /*
- 
+가장 최근 이너 옵저버블에서만 이벤트를 방출하는 연산자
  */
 
 let disposeBag = DisposeBag()
@@ -66,20 +66,20 @@ sourceObservable
     .subscribe { print($0) }
     .disposed(by: disposeBag)
 
-sourceObservable.onNext(redCircle)
+sourceObservable.onNext(redCircle) // 레드 하트 방출
 
-DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // 1초 뒤 그린 하트가 방출되어 레드 하트 방출 스탑
     sourceObservable.onNext(greenCircle)
 }
 
-DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // 1초 뒤 블루 하트가 방출되어 그린 하트 방출 스탑
     sourceObservable.onNext(blueCircle)
 }
 
-DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+DispatchQueue.main.asyncAfter(deadline: .now() + 5) { // 3초 뒤 레드 하트가 방출되어 블루 하트 방출 스탑
   sourceObservable.onNext(redCircle)
 }
 
-DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+DispatchQueue.main.asyncAfter(deadline: .now() + 10) { // 5초 뒤 trigger 호출하여 하트 방출 스탑
     trigger.onNext(())
 }

@@ -28,14 +28,15 @@ import RxSwift
  # map
  */
 /*
- 
+observable이 방출하는 요소를 closer를 적용하여 방출
  */
+
 let disposeBag = DisposeBag()
 let skills = ["Swift", "SwiftUI", "RxSwift"]
 
 Observable.from(skills)
-//  .map { "Hello, \($0)" }
-  .map { $0.count }
+//  .map { "Hello, \($0)" } // "Hello, Swift", "Hello, SwfitUi", "RxSwfit"
+  .map { $0.count } // 5, 7, 7
   .subscribe {  print($0) }
   .disposed(by: disposeBag)
 

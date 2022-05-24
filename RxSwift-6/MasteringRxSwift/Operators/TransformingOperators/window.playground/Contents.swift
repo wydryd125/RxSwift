@@ -28,7 +28,7 @@ import RxSwift
  # window
  */
 /*
- 
+ 원본 옵저버블이 방출하는 항목들을 작은 단위의 옵저버블로 분해, 수집된 항목들을 클로저로 방출한다.
  */
 
 let disposeBag = DisposeBag()

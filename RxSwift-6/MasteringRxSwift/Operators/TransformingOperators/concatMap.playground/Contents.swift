@@ -28,7 +28,7 @@ import RxSwift
  # concatMap
  */
 /*
- 
+ interleaving을 허용하지 않는 연산자로 순서대로 방출한다.
  */
   
 let disposeBag = DisposeBag()

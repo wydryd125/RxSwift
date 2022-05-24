@@ -28,7 +28,8 @@ import RxSwift
  # flatMap
  */
 /*
- 
+ Interleaving 동작 방식을 하는 연산자.
+ 지연없이 바로 방출하기 때문에 순서를 지키지 않게 된다.
  */
 
 let disposeBag = DisposeBag()
@@ -39,7 +40,7 @@ let b = BehaviorSubject(value: 2)
 let subject = PublishSubject<BehaviorSubject<Int>>()
 
 subject
-  .flatMap { $0.asObserver() }
+  .flatMap { $0.asObserver() } 
   .subscribe { print($0) }
   .disposed(by: disposeBag)
 

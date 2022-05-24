@@ -28,7 +28,7 @@ import RxSwift
  # flatMapFirst #1
  */
 /*
- 
+ 방출되는 시점이 겹친다면 먼저 방출된 요소만 방출, 시점이 겹치지 않는다면 조건에 맞게 순서대로 방출된다.
  */
 
 let disposeBag = DisposeBag()
