@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # Sharing Subscriptions
  */
+/*
+ 구독 공유를 통해서 불필요한 중복 작업을 피함.
+ */
 
 let bag = DisposeBag()
 
@@ -46,6 +49,7 @@ let source = Observable<String>.create { observer in
     }
 }
 .debug()
+.share() // 새로운 시퀀스는 시작되지 않는다.
 
 
 source.subscribe().disposed(by: bag)

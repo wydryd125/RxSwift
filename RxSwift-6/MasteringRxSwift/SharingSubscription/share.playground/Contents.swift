@@ -27,9 +27,12 @@ import RxSwift
 /*:
  # share
  */
+/*
+ 
+ */
 
 let bag = DisposeBag()
-let source = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance).debug()
+let source = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance).debug().share(replay: 3, scope: .forever)
 
 let observer1 = source
     .subscribe { print("🔵", $0) }
@@ -44,7 +47,8 @@ DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
 }
 
 DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
-    let observer3 = source.subscribe { print("⚫️", $0) }
+    let observer3 = source
+    .subscribe { print("⚫️", $0) }
     
     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
         observer3.dispose()

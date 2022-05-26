@@ -27,6 +27,9 @@ import RxSwift
 /*:
  # delay
  */
+/*
+ next 이벤트가 전달되는 시점과 구독이 시작되는 시점을 지연시키는 방법
+ */
 
 let bag = DisposeBag()
 
@@ -35,6 +38,14 @@ func currentTimeString() -> String {
    f.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
    return f.string(from: Date())
 }
+
+Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+  .take(10)
+  .debug()
+  .delay(.seconds(5), scheduler: MainScheduler.instance)
+  .subscribe { print(currentTimeString(), $0) }
+  .disposed(by: bag)
+
 
 
 

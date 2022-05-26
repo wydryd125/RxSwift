@@ -27,7 +27,9 @@ import RxSwift
 /*:
  # amb
  */
-
+/*
+ 여러 옵저버블 중에서 가장 먼저 이벤트를 방출하는 옵저버블을 선택
+ */
 
 let bag = DisposeBag()
 
@@ -39,6 +41,18 @@ let a = PublishSubject<String>()
 let b = PublishSubject<String>()
 let c = PublishSubject<String>()
 
+//a.amb(b)
+Observable.amb([a, b, c])
+  .subscribe { print($0) }
+  .disposed(by: bag)
+
+a.onNext("A")
+b.onNext("B")
+
+b.onCompleted()
+a.onCompleted()
+
+//a를 가장 먼저 방출하여 b, c의 이벤트는 아무것도 전달되지 않는다.
 
 
 

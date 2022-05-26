@@ -27,8 +27,22 @@ import RxSwift
 /*:
  # timer
  */
+/*
+지연 시간과 반복 주기를 지정해서 정수를 방출
+ */
 
 let bag = DisposeBag()
+
+Observable<Int>.timer(.seconds(1), scheduler: MainScheduler.instance)
+  .subscribe { print($0) }
+  .disposed(by: bag)
+//반복 주기를 설정하지 않아 1개의 정수만 방출하고 종료
+
+Observable<Int>.timer(.seconds(1), period: .milliseconds(500), scheduler: MainScheduler.instance)
+  .subscribe { print($0) }
+  .disposed(by: bag)
+//period 반복주기를 설정하여 계속 정수 방출
+
 
 
 

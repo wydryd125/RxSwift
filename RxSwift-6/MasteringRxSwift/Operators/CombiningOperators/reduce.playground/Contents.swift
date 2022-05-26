@@ -56,6 +56,7 @@ print("== reduce")
 o.reduce(0, accumulator: +)
   .subscribe { print($0) }
   .disposed(by: bag)
+
 /*
 위와 동일하게 실행되지만 최종 결과만 방출한다. next(15)
  */

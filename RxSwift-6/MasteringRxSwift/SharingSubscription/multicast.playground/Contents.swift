@@ -27,11 +27,16 @@ import RxSwift
 /*:
  # multicast
  */
+/*
+ 
+ */
 
 let bag = DisposeBag()
 let subject = PublishSubject<Int>()
 
-let source = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance).take(5)
+let source = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance).take(5).multicast(subject)
+// multicast를 사용하여 원본 옵저버블을 connectable 옵저버블로 바꾸어 준다.
+// 모든 구독자가 원본 옵저버블을 공유한다.
 
 source
     .subscribe { print("🔵", $0) }
@@ -41,6 +46,9 @@ source
     .delaySubscription(.seconds(3), scheduler: MainScheduler.instance)
     .subscribe { print("🔴", $0) }
     .disposed(by: bag)
+
+source.connect() //connect 호출해야 이벤트를 방출한다.
+
 
 
 

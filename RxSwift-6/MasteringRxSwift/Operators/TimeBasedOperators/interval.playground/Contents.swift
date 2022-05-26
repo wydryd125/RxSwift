@@ -27,7 +27,30 @@ import RxSwift
 /*:
  # interval
  */
+/*
+ 지정된 주기마다 정수를 방출
+ interval('방출 지정 시간', scheduler: <#T##SchedulerType#>)
+ */
 
+let i = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+
+let subscription1 = i.subscribe { print("1 >> \($0)") }
+//  1초 마다 무한정 방출되기 때문에 dispose를 해줘야 함.
+
+DispatchQueue.main.asyncAfter(deadline: .now() + 5) { // 5초 뒤 dispose
+  subscription1.dispose()
+}
+
+
+var subscription2: Disposable?
+
+DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+  subscription2 = i.subscribe { print("2 >> \($0)")}
+}
+
+DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+  subscription2?.dispose()
+}
 
 
 
