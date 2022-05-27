@@ -27,17 +27,22 @@ import RxSwift
 /*:
  # catchAndReturn
  */
+/*
+ error가 발생했을 때 동일한 값을 return 해야 할 때 사용
+ */
 
 let bag = DisposeBag()
 
 enum MyError: Error {
-    case error
+  case error
 }
 
 let subject = PublishSubject<Int>()
 
 subject
-    .subscribe { print($0) }
-    .disposed(by: bag)
+  .catchAndReturn(602)
+// 동일한 값을 return
+  .subscribe { print($0) }
+  .disposed(by: bag)
 
 subject.onError(MyError.error)

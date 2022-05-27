@@ -27,19 +27,36 @@ import RxSwift
 /*:
  # catch(_:)
  */
-
+/*
+ next, completed는 그대로 방출하지만 error 방출하지 않고 새로운 옵저버블이나 기본 값을 방출한다.
+ 네트워크 요청 코드에서 많이 사용한다.
+ */
 
 let bag = DisposeBag()
 
 enum MyError: Error {
-    case error
+  case error
 }
 
 let subject = PublishSubject<Int>()
 let recovery = PublishSubject<Int>()
 
 subject
-    .subscribe { print($0) }
-    .disposed(by: bag)
+  .catch { _ in recovery }
+  .subscribe { print($0) }
+  .disposed(by: bag)
+
+subject.onError(MyError.error)
+
+subject.onNext(123)
+subject.onNext(11)
+//-----error 전달xx
+// catch 연산자가 recovery subject로 교체했기 때문에 구독자에게 error가 전달되지 않는다.
+
+recovery.onNext(22)
+recovery.onNext(602)
+recovery.onCompleted()
+// recovery는 아무 문제가 없어 새로운 이벤트를 추가하면 구독자에게 방출한다.
+// onCompleted 하여 안전하게 종료
 
 
