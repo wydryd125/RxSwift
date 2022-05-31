@@ -25,59 +25,74 @@ import RxSwift
 import RxCocoa
 
 enum ValidationError: Error {
-    case notANumber
+  case notANumber
 }
 
 class DriverViewController: UIViewController {
-    
-    let bag = DisposeBag()
-    
-    @IBOutlet weak var inputField: UITextField!
-    
-    @IBOutlet weak var resultLabel: UILabel!
-    
-    @IBOutlet weak var sendButton: UIButton!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+  
+  let bag = DisposeBag()
+  
+  @IBOutlet weak var inputField: UITextField!
+  
+  @IBOutlet weak var resultLabel: UILabel!
+  
+  @IBOutlet weak var sendButton: UIButton!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
         
-        let result = inputField.rx.text
-            .flatMapLatest { validateText($0) }
-        
-        result
-            .map { $0 ? "Ok" : "Error" }
-            .bind(to: resultLabel.rx.text)
-            .disposed(by: bag)
-        
-        result
-            .map { $0 ? UIColor.blue : UIColor.red }
-            .bind(to: resultLabel.rx.backgroundColor)
-            .disposed(by: bag)
-        
-        result
-            .bind(to: sendButton.rx.isEnabled)
-            .disposed(by: bag)
-        
-    }
+    //    result = inputField.rx.text
+    //      .flatMapLatest {
+    //        validateText($0)
+    //          .observe(on: MainScheduler.instance)
+    //          .catchAndReturn(false)
+    //      }
+    //      .share()
+
+    let result = inputField.rx.text.asDriver()
+    //asDriver 시퀀스를 쓰기 때문에 share 메소드를 사용할 필요가 없다.
+      .flatMapLatest {
+        validateText($0)
+          .asDriver(onErrorJustReturn: false)
+        //error일때 사용하는 값을 지정할수 있다. false 사용
+      }
+      
+    result
+      .map { $0 ? "Ok" : "Error" }
+//      .bind(to: resultLabel.rx.text)
+    //asDirver를 사용하면 bind 대신 drive사용
+      .drive(resultLabel.rx.text)
+      .disposed(by: bag)
+    
+    result
+      .map { $0 ? UIColor.blue : UIColor.red }
+      .drive(resultLabel.rx.backgroundColor)
+      .disposed(by: bag)
+    
+    result
+      .drive(sendButton.rx.isEnabled)
+      .disposed(by: bag)
+    
+  }
 }
 
 
 func validateText(_ value: String?) -> Observable<Bool> {
-    return Observable<Bool>.create { observer in
-        print("== \(value ?? "") Sequence Start ==")
-        
-        defer {
-            print("== \(value ?? "") Sequence End ==")
-        }
-        
-        guard let str = value, let _ = Double(str) else {
-            observer.onError(ValidationError.notANumber)
-            return Disposables.create()
-        }
-        
-        observer.onNext(true)
-        observer.onCompleted()
-        
-        return Disposables.create()
+  return Observable<Bool>.create { observer in
+    print("== \(value ?? "") Sequence Start ==")
+    
+    defer {
+      print("== \(value ?? "") Sequence End ==")
     }
+    
+    guard let str = value, let _ = Double(str) else {
+      observer.onError(ValidationError.notANumber)
+      return Disposables.create()
+    }
+    
+    observer.onNext(true)
+    observer.onCompleted()
+    
+    return Disposables.create()
+  }
 }

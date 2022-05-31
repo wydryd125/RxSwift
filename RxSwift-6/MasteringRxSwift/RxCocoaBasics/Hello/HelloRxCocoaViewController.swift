@@ -27,16 +27,25 @@ import RxCocoa
 
 
 class HelloRxCocoaViewController: UIViewController {
+  
+  let bag = DisposeBag()
+  
+  @IBOutlet weak var valueLabel: UILabel!
+  
+  @IBOutlet weak var tapButton: UIButton!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
     
-    let bag = DisposeBag()
+    //tap 할때마다 next 이벤트 방출
+    tapButton.rx.tap
+      .map { "Hello, RxCocoa" }
+    //        .subscribe(onNext: { [weak self] str in
+    //          self?.valueLabel.text = str
+    //        })
+      .bind(to: valueLabel.rx.text)
+    //위와 결과는 같음. rx가 들어가면 binder, 일반 타입과는 속성이 다르다.
+      .disposed(by: bag)
     
-    @IBOutlet weak var valueLabel: UILabel!
-    
-    @IBOutlet weak var tapButton: UIButton!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        
-    }
+  }
 }

@@ -27,36 +27,36 @@ import RxSwift
 import RxCocoa
 
 class BindingRxCocoaViewController: UIViewController {
+  
+  @IBOutlet weak var valueLabel: UILabel!
+  
+  @IBOutlet weak var valueField: UITextField!
+  
+  let disposeBag = DisposeBag()
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
     
-    @IBOutlet weak var valueLabel: UILabel!
+    valueLabel.text = ""
+    valueField.becomeFirstResponder()
     
-    @IBOutlet weak var valueField: UITextField!
+    //        valueField.rx.text
+    //            .observe(on: MainScheduler.instance)
+    //            .subscribe(onNext: { [weak self] str in
+    //                self?.valueLabel.text = str
+    //            })
+    //            .disposed(by: disposeBag)
     
-    let disposeBag = DisposeBag()
+    valueField.rx.text
+      .bind(to: valueLabel.rx.text)
+    //옵저버 타입을 구현, 위와 같은 결과
+      .disposed(by: disposeBag)
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        valueLabel.text = ""
-        valueField.becomeFirstResponder()
-        
-        
-//        valueField.rx.text
-//            .observe(on: MainScheduler.instance)
-//            .subscribe(onNext: { [weak self] str in
-//                self?.valueLabel.text = str
-//            })
-//            .disposed(by: disposeBag)
-        
-        valueField.rx.text
-            .bind(to: valueLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-    }
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        valueField.resignFirstResponder()
-    }
+    valueField.resignFirstResponder()
+  }
 }

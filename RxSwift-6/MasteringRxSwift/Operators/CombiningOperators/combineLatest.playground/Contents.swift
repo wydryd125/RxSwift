@@ -59,6 +59,3 @@ languages.onNext("SwiftUI")
 greetings.onNext("햐햐햐햐햐")
 
 languages.onCompleted()
-
-
-
