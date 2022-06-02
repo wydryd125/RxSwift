@@ -49,6 +49,7 @@ class RxCocoaTableViewViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    
     // #1 - tableView를 반환하여 cell을 closer에서 만들어준다.
 //    nameObservable.bind(to: listTableView.rx.items) { tableview, row, element in
 //      let cell = tableview.dequeueReusableCell(withIdentifier: "standardCell")!
