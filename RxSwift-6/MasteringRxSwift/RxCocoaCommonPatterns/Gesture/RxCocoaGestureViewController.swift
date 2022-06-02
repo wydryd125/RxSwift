@@ -26,18 +26,30 @@ import RxSwift
 import RxCocoa
 
 class RxCocoaGestureViewController: UIViewController {
+  
+  let bag = DisposeBag()
+  
+  @IBOutlet weak var targetView: UIView!
+  
+  @IBOutlet var panGesture: UIPanGestureRecognizer!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
     
-    let bag = DisposeBag()
+    targetView.center = view.center
     
-    @IBOutlet weak var targetView: UIView!
-    
-    @IBOutlet var panGesture: UIPanGestureRecognizer!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    panGesture.rx.event
+      .subscribe(onNext: { [unowned self] gesture in
+        guard let target = gesture.view else { return }
         
-        targetView.center = view.center
+        let translation = gesture.translation(in: self.view)
         
+        // 제스처에 따라 뷰가 이동 
+        target.center.x += translation.x
+        target.center.y += translation.y
         
-    }
+        gesture.setTranslation(.zero, in: self.view)
+      })
+      .disposed(by: bag)
+  }
 }

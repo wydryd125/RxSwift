@@ -39,15 +39,32 @@ class RxCocoaNotificationCenterViewController: UIViewController {
         toggleButton.rx.tap
             .subscribe(onNext: { [unowned self] in
                 if self.textView.isFirstResponder {
-                    self.textView.resignFirstResponder()
+                    self.textView.resignFirstResponder() // textView 포커스, 키보드 노출
                 } else {
-                    self.textView.becomeFirstResponder()
+                    self.textView.becomeFirstResponder() // textView 포커스X, 키보드X
                 }
             })
             .disposed(by: bag)
         
-        
-        
+      let willShowObservable = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+        .map { ($0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height ?? 0 }
+      
+      let willHideObservable = NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        .map { noti -> CGFloat in 0 }
+      
+      // 키보드가 노출되었을때 textView의 위치를 이동, 키보드가 사라졌을때 원래 자리로 이동
+      Observable.merge(willShowObservable, willHideObservable)
+        .map { [unowned self] height -> UIEdgeInsets in
+          var inset = self.textView.contentInset
+          inset.bottom = height
+          return inset
+        }
+        .subscribe(onNext: { [weak self] inset in
+          UIView.animate(withDuration: 0.3) {
+            self?.textView.contentInset = inset
+          }
+        })
+        .disposed(by: bag)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
