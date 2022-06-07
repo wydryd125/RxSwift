@@ -27,50 +27,102 @@ import RxSwift
 import RxCocoa
 
 class CustomControlEventViewController: UIViewController {
+  
+  let bag = DisposeBag()
+  
+  @IBOutlet weak var inputField: UITextField!
+  
+  @IBOutlet weak var countLabel: UILabel!
+  
+  @IBOutlet weak var doneButton: UIButton!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
     
-    let bag = DisposeBag()
+    inputField.borderStyle = .none
+    inputField.layer.borderWidth = 3
+    inputField.layer.borderColor = UIColor.gray.cgColor
     
-    @IBOutlet weak var inputField: UITextField!
+    let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: inputField.frame.height))
+    inputField.leftView = paddingView
+    inputField.leftViewMode = .always
     
-    @IBOutlet weak var countLabel: UILabel!
+    //1, 2, 3 똑같은 결과
+    //1
+    inputField.rx.text
+      .map { $0?.count ?? 0 }
+      .map { "\($0)" }
+      .bind(to: countLabel.rx.text)
+      .disposed(by: bag)
     
-    @IBOutlet weak var doneButton: UIButton!
+    //2
+    inputField.rx.editingChanged
+      .map { self.inputField.text }
+      .bind(to: countLabel.rx.countText)
+      .disposed(by: bag)
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        inputField.borderStyle = .none
-        inputField.layer.borderWidth = 3
-        inputField.layer.borderColor = UIColor.gray.cgColor
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: inputField.frame.height))
-        inputField.leftView = paddingView
-        inputField.leftViewMode = .always
-        
-        inputField.rx.text
-            .map { $0?.count ?? 0 }
-            .map { "\($0)" }
-            .bind(to: countLabel.rx.text)
-            .disposed(by: bag)
-        
-        doneButton.rx.tap
-            .subscribe(onNext: { [weak self] _ in
-                self?.inputField.resignFirstResponder()
-            })
-            .disposed(by: bag)
-        
-        inputField.delegate = self
-    }
+    //3
+    inputField.rx.text
+      .bind(to: countLabel.rx.countText)
+      .disposed(by: bag)
+    
+    doneButton.rx.tap
+      .subscribe(onNext: { [weak self] _ in
+        self?.inputField.resignFirstResponder()
+      })
+      .disposed(by: bag)
+    
+    inputField.rx.editingDidBegin
+      .map { UIColor.red }
+      .bind(to: inputField.rx.borderColor)
+      .disposed(by: bag)
+    
+    
+    inputField.rx.ediditingDidEnd
+      .map { UIColor.gray }
+      .bind(to: inputField.rx.borderColor)
+      .disposed(by: bag)
+
+    //        inputField.delegate = self
+  }
 }
 
-extension CustomControlEventViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.red.cgColor
+//extension CustomControlEventViewController: UITextFieldDelegate {
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        textField.layer.borderColor = UIColor.red.cgColor
+//    }
+//
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        textField.layer.borderColor = UIColor.gray.cgColor
+//    }
+//}
+
+// 주석 처리 된 delegate - textFieldDidBeginEditing, textFieldDidEndEditing와 같은 기능을 쓸수 있게 확장.
+extension Reactive where Base: UITextField {
+  var borderColor: Binder<UIColor?> {
+    return Binder(self.base) { textField, color in
+      textField.layer.borderColor = color?.cgColor
     }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.gray.cgColor
-    }
+  }
+  
+  var editingDidBegin: ControlEvent<Void> {
+    return controlEvent(.editingDidBegin)
+  }
+  
+  var ediditingDidEnd: ControlEvent<Void> {
+    return controlEvent(.editingDidEnd)
+  }
+  
+  var editingChanged: ControlEvent<Void> {
+    return controlEvent(.editingChanged)
+  }
 }
 
-
+extension Reactive where Base: UILabel {
+  var countText: Binder<String?> {
+    return Binder(self.base) { label, text in
+      let count = text?.count ?? 0
+      label.text = String(count)
+    }
+  }
+}
