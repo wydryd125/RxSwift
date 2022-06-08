@@ -24,10 +24,12 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import NSObject_Rx
 
+// NSObject_Rx import 하면 DisposeBag을 그냥 사용 할 수 있다
 class NSObjectRxViewController: UIViewController {
     
-    let bag = DisposeBag()
+//    let bag = DisposeBag()
     
     let button = UIButton(type: .system)
     let label = UILabel()
@@ -37,22 +39,23 @@ class NSObjectRxViewController: UIViewController {
         
         Observable.just("Hello")
             .subscribe { print($0) }
-            .disposed(by: bag)
+            .disposed(by: rx.disposeBag)
         
         button.rx.tap
             .map { "Hello" }
             .bind(to: label.rx.text)
-            .disposed(by: bag)
+            .disposed(by: rx.disposeBag)
     }
 }
 
-class MyClass {
-    let bag = DisposeBag()
+//HasDisposeBag은 구조체에서 사용 할 수 없다.
+class MyClass: HasDisposeBag {
+//    let bag = DisposeBag()
     
     func doSomething() {
         Observable.just("Hello")
             .subscribe { print($0) }
-            .disposed(by: bag)
+            .disposed(by: disposeBag)
     }
 }
 

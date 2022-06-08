@@ -27,37 +27,116 @@ import RxCocoa
 import NSObject_Rx
 
 enum ApiError: Error {
-    case badUrl
-    case invalidResponse
-    case failed(Int)
-    case invalidData
+  case badUrl
+  case invalidResponse
+  case failed(Int)
+  case invalidData
 }
 
 class RxCocoaURLSessionViewController: UIViewController {
+  
+  @IBOutlet weak var listTableView: UITableView!
+  
+  @IBOutlet weak var loader: UIActivityIndicatorView!
+  
+  let list = BehaviorSubject<[Book]>(value: [])
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
     
-    @IBOutlet weak var listTableView: UITableView!
+    list
+      .bind(to: listTableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
+        cell.textLabel?.text = element.title
+        cell.detailTextLabel?.text = element.desc
+      }
+      .disposed(by: rx.disposeBag)
     
-    @IBOutlet weak var loader: UIActivityIndicatorView!
-    
-    let list = BehaviorSubject<[Book]>(value: [])
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        list
-            .bind(to: listTableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
-                cell.textLabel?.text = element.title
-                cell.detailTextLabel?.text = element.desc
-            }
-            .disposed(by: rx.disposeBag)
-        
-        fetchBookList()
-    }
-    
-    
-    func fetchBookList() {
-        
-        
-        
-    }
+    fetchBookList()
+  }
+  
+  
+  func fetchBookList() {
+    //1,2 같은 결과
+    //1
+    let response = Observable.just(booksUrlStr)
+      .map { URL(string: $0)! }
+      .map { URLRequest(url: $0) }
+      .flatMap { URLSession.shared.rx.data(request: $0) }
+      .map(BookList.parse(data:))
+      .asDriver(onErrorJustReturn: [])
+  
+    //2
+//    let response = Observable<[Book]>.create { observer in
+//      // url이 잘못되었을때 error 이벤트 방출(종료)
+//      guard let url = URL(string: booksUrlStr) else {
+//        observer.onError(ApiError.badUrl)
+//        return Disposables.create()
+//      }
+//
+//      DispatchQueue.main.async { [weak self] in
+//        self?.loader.startAnimating()
+//      }
+//
+//      let session = URLSession.shared
+//
+//      let task = session.dataTask(with: url) { [weak self] (data, response, error) in
+//        //            defer { //defer: 함수가 끝나는 마지막에 실행
+//        //                DispatchQueue.main.async { [weak self] in
+//        //                    self?.listTableView.reloadData()
+//        //                    self?.loader.stopAnimating()
+//        //                }
+//        //            }
+//        if let error = error {
+//          observer.onError(error)
+//          return
+//        }
+//
+//        guard let httpResponse = response as? HTTPURLResponse else {
+//          observer.onError(ApiError.invalidResponse)
+//          return
+//        }
+//
+//        guard (200...299).contains(httpResponse.statusCode) else {
+//          observer.onError(ApiError.failed(httpResponse.statusCode))
+//          return
+//        }
+//
+//        guard let data = data else {
+//          observer.onError(ApiError.invalidData)
+//          return
+//        }
+//
+//        do {
+//          let decoder = JSONDecoder()
+//          let bookList = try decoder.decode(BookList.self, from: data)
+//
+//          if bookList.code == 200 {
+//            observer.onNext(bookList.list)
+//          } else {
+//            observer.onNext([])
+//          }
+//
+//          observer.onCompleted()
+//        } catch {
+//          observer.onError(error)
+//        }
+//      }
+//      task.resume()
+//
+//      return Disposables.create {
+//        task.cancel() //현재 실행중인 task를 취소
+//      }
+//    }
+//      .asDriver(onErrorJustReturn: [])
+//
+//      response
+//      .drive(list)
+//      .disposed(by: rx.disposeBag)
+//
+//    response
+//      .map { _ in false }
+//      .startWith(true)
+//      .drive(UIApplication.shared.rx.isNetworkActivityIndicatorVisible)
+//      .disposed(by: rx.disposeBag)
+  }
 }

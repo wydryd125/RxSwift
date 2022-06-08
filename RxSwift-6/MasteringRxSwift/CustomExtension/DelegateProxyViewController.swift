@@ -39,14 +39,17 @@ class DelegateProxyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
       
+      //사용자들에게 허가 요청
       locationManager.requestAlwaysAuthorization()
       locationManager.startUpdatingLocation()
       
+      //구독자를 추가하고 위치 정보를 출력
       locationManager.rx.didUpdateLocations
         .subscribe(onNext: { location in
           print(location)
         })
         .disposed(by: bag)
+      
       
       locationManager.rx.didUpdateLocations
         .map { $0[0] }
@@ -67,7 +70,7 @@ extension Reactive where Base: MKMapView {
 
 //--------- 필수로 구현해야함 ----------
 //CLLocationManagerDelegate 확장하여 사용
-//HasDelegate를 채용하면 기존 delegate, datasource를 확장 할 수 있다.
+//HasDelegate를 채용하면 기존 delegate, datasource를 사용 할 수 있다.
 extension CLLocationManager: HasDelegate {
   public typealias Delegate = CLLocationManagerDelegate
 }
@@ -90,13 +93,13 @@ class RxCLLocationManagerDelegateProxy: DelegateProxy<CLLocationManager, CLLocat
 }
 
 extension Reactive where Base: CLLocationManager {
-  var delegte: DelegateProxy<CLLocationManager, CLLocationManagerDelegate> {
+  var delegate: DelegateProxy<CLLocationManager, CLLocationManagerDelegate> {
     return RxCLLocationManagerDelegateProxy.proxy(for: base)
   }
 //--------------------------------
   
   var didUpdateLocations: Observable<[CLLocation]> {
-    return delegte.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:didUpdateLocations:)))
+    return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:didUpdateLocations:)))
       .map { parameters in
         return parameters[1] as! [CLLocation]
       }
